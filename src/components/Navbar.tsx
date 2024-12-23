@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
 import { usePathname } from 'next/navigation';
-import { FaShoppingCart } from 'react-icons/fa';
+import { HiOutlineShoppingBag } from 'react-icons/hi';
+import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const cartItemCount = 0; // assuming this is where you get the cart item count from
 
   const isActivePath = (path: string) => {
     return pathname === path;
@@ -75,15 +77,17 @@ export default function Navbar() {
               </div>
 
               {/* Warenkorb */}
-              <Link
-                href="/cart"
-                className="p-2 text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300"
+              <button 
+                className="relative p-2 text-gray-300 hover:text-[#0095FF] transition-all duration-300 group"
+                aria-label="Warenkorb öffnen"
               >
-                <FaShoppingCart className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 bg-[#0095FF] text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  0
-                </span>
-              </Link>
+                <HiOutlineShoppingBag className="h-6 w-6 transform group-hover:scale-110 transition-all duration-300" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#0095FF] to-[#0047AB] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
 
               {/* Anmelden Button */}
               <Link
@@ -100,13 +104,9 @@ export default function Navbar() {
               >
                 <span className="sr-only">Menü öffnen</span>
                 {!isMobileMenuOpen ? (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
+                  <HiMenuAlt3 className="h-6 w-6" />
                 ) : (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <HiX className="h-6 w-6" />
                 )}
               </button>
             </div>
