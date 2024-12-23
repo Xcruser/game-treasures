@@ -1,36 +1,108 @@
-# Game Treasures
+# GameTreasures
 
-Eine moderne Gaming-Shop-Anwendung, entwickelt mit Next.js 13+, React und Tailwind CSS.
+Eine moderne E-Commerce-Plattform für Monopoly Go Items, entwickelt mit Next.js 13 und Tailwind CSS.
 
-## Features
+## 🚀 Features
 
-- Dynamische Item-Anzeige mit Lazy Loading
-- Modernes UI-Design mit Glasmorphismus-Effekten
-- Responsive Suchfunktion (Desktop & Mobile)
-- Integrierter Warenkorb
-- Optimierte Performance durch:
-  - Lazy Loading von Komponenten
-  - Intersection Observer für Bildladung
-  - Optimierte Next.js Image-Komponente
-  - Progressive Loading States
+### UI/UX Verbesserungen
+- **Dynamischer Hintergrund**: 
+  - Animierte Gaming-Icons mit zufälligen, natürlichen Bewegungen
+  - Automatische Aktualisierung der Bewegungsmuster alle 20 Sekunden
+  - Sanfte Übergänge und unterschiedliche Animationsgeschwindigkeiten
+  - Subtile Blur- und Opazitätseffekte für bessere Integration
 
-## Technologie-Stack
+- **Modernes Layout**:
+  - Responsive Design mit Flexbox und Grid
+  - Glasmorphismus-Effekte für UI-Elemente
+  - Gradient-Texte und Hover-Effekte
+  - Optimierte Abstände und Typografie
 
-- **Framework**: Next.js 13+
-- **UI**: React & Tailwind CSS
+### Performance
+- Client-seitige Komponenten für optimale Interaktivität
+- Lazy Loading für bessere Ladezeiten
+- Optimierte Asset-Verwaltung
+
+### Sicherheit
+- Sichere Zahlungsabwicklung
+- Datenschutzkonforme Implementierung
+- Verschlüsselte Kommunikation
+
+## 🛠 Technologie-Stack
+
+- **Frontend**: Next.js 13, React, TypeScript
+- **Styling**: Tailwind CSS
 - **Icons**: React Icons
-- **Performance**: Next.js Image Optimization
-- **Styling**: CSS Modules & Tailwind CSS
+- **Animation**: Custom CSS Animations, React Hooks
+- **State Management**: React Context
 
-## Performance-Optimierungen
+## 🗂 Projektstruktur
 
-- Lazy Loading für Komponenten und Bilder
-- Optimierte Bildgrößen und Formate
-- Progressive Loading States
-- Intersection Observer für verzögertes Laden
-- Optimierte Metadaten für SEO
+```
+game-treasures/
+├── src/                # Quellcode
+├── public/            # Statische Assets
+├── prisma/           # Datenbankschema und Migrationen
+├── .next/            # Next.js Build-Ausgabe
+└── node_modules/     # Projektabhängigkeiten
+```
 
-## Setup
+## 💻 Entwicklungsumgebung
+
+### Voraussetzungen
+- Node.js (>= 18.0.0)
+- npm oder yarn
+- Git
+
+### Empfohlene IDE-Einstellungen
+- VS Code mit folgenden Erweiterungen:
+  - ESLint
+  - Prettier
+  - Tailwind CSS IntelliSense
+
+## 🔧 Konfiguration
+
+1. Umgebungsvariablen einrichten:
+```bash
+cp .env.example .env.local
+```
+
+2. Datenbank einrichten:
+```bash
+npx prisma migrate dev
+```
+
+## 🧪 Tests
+
+Tests ausführen:
+```bash
+npm run test
+```
+
+## 📚 API-Dokumentation
+
+Die API-Dokumentation ist verfügbar unter `/api/docs` im Entwicklungsmodus.
+
+## 🔐 Sicherheitsrichtlinien
+
+- Alle API-Endpunkte sind mit entsprechenden Middleware-Funktionen geschützt
+- Sensitive Daten werden verschlüsselt gespeichert
+- Rate-Limiting ist implementiert
+
+## 📈 Performance-Optimierungen
+
+- Implementierung von React.memo() für optimierte Rerenders
+- Image-Optimierung durch next/image
+- Caching-Strategien für API-Calls
+
+## 🔄 Letzte Updates
+
+### Version 1.1.0
+- Implementierung des animierten Hintergrunds mit Gaming-Icons
+- Verbessertes Layout-Design mit Glasmorphismus
+- Optimierte Benutzerführung und Navigation
+- Verbesserte Performance durch Code-Splitting
+
+## 📦 Installation
 
 1. Repository klonen:
 ```bash
@@ -47,32 +119,10 @@ npm install
 npm run dev
 ```
 
-4. Browser öffnen und zur Anwendung navigieren:
-```
-http://localhost:3000
-```
+## 🤝 Beitragen
 
-## Projektstruktur
+Wir freuen uns über Beiträge! Bitte lesen Sie unsere Beitragsrichtlinien für weitere Informationen.
 
-```
-src/
-├── app/                    # Next.js App Router
-├── components/            # React Komponenten
-│   ├── ItemCard.tsx      # Produkt-Karten
-│   ├── Navbar.tsx        # Navigation
-│   └── LoadingSpinner.tsx # Lade-Animation
-├── styles/               # Globale Styles
-└── types/                # TypeScript Definitionen
-```
+## 📝 Lizenz
 
-## Nächste Schritte
-
-- [ ] Backend-Integration
-- [ ] Authentifizierung
-- [ ] Warenkorb-Funktionalität
-- [ ] Zahlungsabwicklung
-- [ ] Admin-Dashboard
-
-## Lizenz
-
-MIT
+Dieses Projekt ist unter der MIT-Lizenz lizenziert.
