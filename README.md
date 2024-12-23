@@ -25,11 +25,19 @@ Eine moderne E-Commerce-Plattform für Monopoly Go Items, entwickelt mit Next.js
   - Bestellungs- und Kundenverwaltung
 
 - **Features**:
-  - Produktverwaltung mit CRUD-Operationen
-  - Bestellungsübersicht und -verwaltung
-  - Kundenmanagement
-  - Statistiken und Analysen
-  - Einstellungen und Konfiguration
+  - Vollständige Produktverwaltung (CRUD)
+    - Produkte hinzufügen, bearbeiten und löschen
+    - Bildupload und -verwaltung
+    - Lagerbestandsverwaltung (inkl. "Unbegrenzt" Option)
+  - Dashboard mit Statistiken
+    - Produktübersicht
+    - Bestellungsstatistiken
+    - Umsatzübersicht
+    - Kundenaktivität
+  - Schnellzugriff auf wichtige Funktionen
+    - "Produkt hinzufügen" direkt vom Dashboard
+    - Letzte Produktaktualisierungen
+    - Aktivitätsübersicht
 
 ### Performance
 - Client-seitige Komponenten für optimale Interaktivität
@@ -102,19 +110,16 @@ npx prisma db seed
 npm run dev
 ```
 
-## 🔄 Letzte Updates
+## 📝 Letzte Änderungen
 
-### Version 1.2.0 (23.12.2023)
-- Implementierung des Admin Dashboards
-- Verbesserte Produktverwaltung mit Echtzeit-Updates
-- Layout-Optimierungen für bessere Benutzerfreundlichkeit
-- Datenbankintegration mit Prisma
-- Admin-Authentifizierung
-
-### Version 1.1.0
-- Implementierung des animierten Hintergrunds mit Gaming-Icons
-- Verbessertes Layout-Design mit Glasmorphismus
-
-## 📝 Lizenz
-
-Dieses Projekt ist unter der MIT-Lizenz lizenziert.
+### 23.12.2023
+- Admin Dashboard überarbeitet
+  - Neues, übersichtlicheres Layout
+  - Integration der Produktverwaltung
+  - Statistik-Karten für wichtige Kennzahlen
+  - Quick-Actions für häufige Aufgaben
+  - Aktivitätsübersicht für neue Produkte
+- Produktverwaltung verbessert
+  - Direkte Produkterstellung vom Dashboard
+  - Verbessertes Modal-Design
+  - Optimierte Benutzerführung

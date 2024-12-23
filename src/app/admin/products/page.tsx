@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FaPlus, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
+import EditProductModal from '@/components/EditProductModal';
 
 interface Product {
   id: string;
@@ -17,25 +18,90 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (!response.ok) {
+        throw new Error('Fehler beim Laden der Produkte');
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/products');
-        if (!response.ok) {
-          throw new Error('Fehler beim Laden der Produkte');
-        }
-        const data = await response.json();
-        setProducts(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchProducts();
   }, []);
+
+  const handleEdit = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Möchten Sie dieses Produkt wirklich löschen?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Fehler beim Löschen des Produkts');
+      }
+
+      await fetchProducts();
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert('Fehler beim Löschen des Produkts');
+    }
+  };
+
+  const handleSave = async (product: Product) => {
+    try {
+      console.log('Saving product:', product);
+      
+      // Entferne unlimitedStock aus den Daten
+      const { unlimitedStock, ...productData } = product;
+      
+      const isNewProduct = !product.id;
+      const url = isNewProduct ? '/api/products' : `/api/products/${product.id}`;
+      const method = isNewProduct ? 'POST' : 'PUT';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Fehler beim Speichern des Produkts');
+      }
+
+      setIsModalOpen(false);
+      await fetchProducts();
+    } catch (err) {
+      console.error('Error saving product:', err);
+      alert(err instanceof Error ? err.message : 'Fehler beim Speichern des Produkts');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -48,95 +114,90 @@ export default function ProductsPage() {
   if (error) {
     return (
       <div className="p-8">
-        <div className="text-red-500">Fehler: {error}</div>
+        <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col">
-      {/* Header */}
-      <header className="bg-[#1A2642]/40 backdrop-blur-md shadow-lg sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-white">Produkte verwalten</h1>
-            <button className="bg-[#0095FF] hover:bg-[#0077CC] text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-              <FaPlus className="w-4 h-4" />
-              <span>Neues Produkt</span>
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-white">Produkte verwalten</h1>
+        <button
+          onClick={handleAddNew}
+          className="flex items-center gap-2 px-4 py-2 bg-[#0095FF] text-white rounded-lg hover:bg-[#0077CC] transition-colors"
+        >
+          <FaPlus />
+          Neues Produkt
+        </button>
+      </div>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        {/* Search and Filter */}
-        <div className="bg-[#1A2642]/40 backdrop-blur-md rounded-xl p-4 mb-8">
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Produkt suchen..."
-                className="w-full bg-[#0B1120] text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-[#0095FF]"
-              />
-            </div>
-            <select className="bg-[#0B1120] text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-[#0095FF]">
-              <option value="">Alle Kategorien</option>
-              <option value="Würfel">Würfel</option>
-              <option value="Brettspiele">Brettspiele</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Products Table */}
-        <div className="bg-[#1A2642]/40 backdrop-blur-md rounded-xl overflow-hidden">
+      <div className="bg-[#1A2642] rounded-xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0B1120]/50">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Produkt</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Kategorie</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Preis</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lagerbestand</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Aktionen</th>
+              <tr className="bg-[#0B1120] text-gray-300 text-left">
+                <th className="p-4">Bild</th>
+                <th className="p-4">Name</th>
+                <th className="p-4">Preis</th>
+                <th className="p-4">Lagerbestand</th>
+                <th className="p-4">Kategorie</th>
+                <th className="p-4">Aktionen</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-[#2A3B5E]">
               {products.map((product) => (
-                <tr key={product.id} className="hover:bg-[#0B1120]/30">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0">
-                        <img className="h-10 w-10 rounded-lg object-cover" src={product.imageUrl} alt={product.name} />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-white">{product.name}</div>
-                      </div>
+                <tr key={product.id} className="text-gray-200 hover:bg-[#2A3B5E]/50">
+                  <td className="p-4">
+                    <img
+                      src={product.imageUrl || '/placeholder.png'}
+                      alt={product.name}
+                      className="w-16 h-16 object-contain rounded-lg bg-[#0B1120]"
+                    />
+                  </td>
+                  <td className="p-4">{product.name}</td>
+                  <td className="p-4">€{product.price.toFixed(2)}</td>
+                  <td className="p-4">
+                    {product.inStock === -1 ? (
+                      <span className="text-green-500">Unbegrenzt</span>
+                    ) : product.inStock > 0 ? (
+                      <span className="text-green-500">{product.inStock}</span>
+                    ) : (
+                      <span className="text-red-500">Ausverkauft</span>
+                    )}
+                  </td>
+                  <td className="p-4">{product.category}</td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                        title="Bearbeiten"
+                      >
+                        <FaEdit size={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                        title="Löschen"
+                      >
+                        <FaTrash size={20} />
+                      </button>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">{product.category}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">€{product.price.toFixed(2)}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">{product.inStock}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-[#0095FF] hover:text-[#0077CC] mr-3">
-                      <FaEdit className="w-4 h-4" />
-                    </button>
-                    <button className="text-red-500 hover:text-red-700">
-                      <FaTrash className="w-4 h-4" />
-                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </main>
+      </div>
+
+      <EditProductModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+      />
     </div>
   );
 }

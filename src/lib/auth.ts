@@ -1,69 +1,68 @@
-import { PrismaClient } from '@prisma/client';
+import { NextAuthOptions } from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { prisma } from './prisma';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
-
-export async function authenticateAdmin(email: string, password: string) {
-  try {
-    // Finde Admin anhand der E-Mail
-    const admin = await prisma.admin.findUnique({
-      where: { email },
-    });
-
-    if (!admin) {
-      return null;
-    }
-
-    // Überprüfe das Passwort
-    const isValid = await bcrypt.compare(password, admin.hashedPassword);
-
-    if (!isValid) {
-      return null;
-    }
-
-    // Aktualisiere lastLogin
-    await prisma.admin.update({
-      where: { id: admin.id },
-      data: { lastLogin: new Date() },
-    });
-
-    // Gib Admin-Daten ohne Passwort zurück
-    const { hashedPassword, ...adminData } = admin;
-    return adminData;
-  } catch (error) {
-    console.error('Authentifizierungsfehler:', error);
-    return null;
-  }
-}
-
-export async function createAdmin(email: string, password: string, name?: string) {
-  try {
-    // Prüfe, ob Admin bereits existiert
-    const existingAdmin = await prisma.admin.findUnique({
-      where: { email },
-    });
-
-    if (existingAdmin) {
-      throw new Error('Admin mit dieser E-Mail existiert bereits');
-    }
-
-    // Hash das Passwort
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Erstelle neuen Admin
-    const admin = await prisma.admin.create({
-      data: {
-        email,
-        hashedPassword,
-        name,
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
-    });
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-    // Gib Admin-Daten ohne Passwort zurück
-    const { hashedPassword: _, ...adminData } = admin;
-    return adminData;
-  } catch (error) {
-    console.error('Fehler beim Erstellen des Admins:', error);
-    throw error;
-  }
-}
+        const admin = await prisma.admin.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        });
+
+        if (!admin) {
+          return null;
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          admin.hashedPassword
+        );
+
+        if (!isPasswordValid) {
+          return null;
+        }
+
+        return {
+          id: admin.id,
+          email: admin.email,
+          name: admin.name,
+        };
+      },
+    }),
+  ],
+  session: {
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/admin/login',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = 'admin';
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.role = token.role;
+      }
+      return session;
+    },
+  },
+};

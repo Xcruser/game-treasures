@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function createInitialAdmin() {
   try {
     const email = 'admin@gametreasures.de';
-    const password = 'Admin@GT2023'; // Ändern Sie dies in ein sicheres Passwort
+    const password = 'admin123'; // Geändertes Passwort
 
     // Prüfe, ob Admin bereits existiert
     const existingAdmin = await prisma.admin.findUnique({
@@ -14,7 +14,13 @@ async function createInitialAdmin() {
     });
 
     if (existingAdmin) {
-      console.log('Admin-Benutzer existiert bereits');
+      // Wenn Admin existiert, aktualisiere das Passwort
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const updatedAdmin = await prisma.admin.update({
+        where: { email },
+        data: { hashedPassword },
+      });
+      console.log('Admin-Passwort erfolgreich aktualisiert:', updatedAdmin.email);
       return;
     }
 

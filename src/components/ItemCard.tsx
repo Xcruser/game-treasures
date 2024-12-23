@@ -80,7 +80,9 @@ export default function ItemCard({ item, onAddToCart }: ItemCardProps) {
 
               {/* Lagerbestand-Anzeige */}
               <div className="text-sm">
-                {item.inStock > 0 ? (
+                {item.inStock === -1 ? (
+                  <span className="text-green-500">Auf Lager</span>
+                ) : item.inStock > 0 ? (
                   <span className="text-green-500">{item.inStock} auf Lager</span>
                 ) : (
                   <span className="text-red-500">Ausverkauft</span>
