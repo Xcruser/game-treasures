@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GameTreasures
 
-## Getting Started
+Eine moderne Plattform für den Handel mit In-Game Items, entwickelt mit Next.js 13+, TypeScript und Tailwind CSS.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Navigation & UI
+- Moderne, responsive Navbar mit Glaseffekt-Design
+- Dynamische Suchfunktion mit Echtzeit-Ergebnissen
+- Warenkorb-System mit visueller Feedback
+- Benutzerauthentifizierung
+
+### Design-System
+- Dunkles Theme mit subtilen Blautönen
+- Glassmorphismus-Effekte
+- Responsive Design für alle Geräten
+- Moderne UI-Komponenten mit Hover-Effekten
+
+## Technologie-Stack
+
+- **Frontend Framework:** Next.js 13+
+- **Sprache:** TypeScript
+- **Styling:** Tailwind CSS
+- **State Management:** React Hooks
+- **Komponenten:** Custom React Components
+
+## Komponenten
+
+### Navbar (`/src/components/Navbar.tsx`)
+- Responsive Navigation
+- Integrierte Suchfunktion
+- Warenkorb-Anzeige
+- Benutzer-Authentifizierung
+
+### SearchBar (`/src/components/SearchBar.tsx`)
+- Echtzeit-Suche mit Debouncing
+- Dropdown mit Suchergebnissen
+- Responsive Design
+- Keyboard Navigation (geplant)
+
+### Custom Hooks
+- `useDebounce`: Optimiert Suchanfragen
+
+## Styling
+
+### Farbschema
+```typescript
+// Hauptfarben
+background: {
+  DEFAULT: '#000008',    // Sehr dunkles Blauschwarz
+  secondary: '#00000f',  // Etwas mehr Blau
+  tertiary: '#000016',   // Noch etwas mehr Blau
+}
+
+// Akzentfarben
+- Cyan/Blau Verläufe für Highlights
+- Glaseffekte mit subtiler Transparenz
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Glaseffekt-System
+- Subtile Transparenz
+- Weicher Blur-Effekt
+- Dezente Borders
+- Sanfte Schatten
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Repository klonen:
+```bash
+git clone [repository-url]
+```
 
-## Learn More
+2. Abhängigkeiten installieren:
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+3. Entwicklungsserver starten:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Geplante Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [ ] Backend-Integration
+- [ ] Erweiterte Suchfilter
+- [ ] Benutzerprofile
+- [ ] Item-Kategorisierung
+- [ ] Bewertungssystem
 
-## Deploy on Vercel
+## Mitwirken
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Beiträge sind willkommen! Bitte lesen Sie unsere Beitragsrichtlinien für weitere Informationen.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz lizenziert.
