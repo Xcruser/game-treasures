@@ -30,6 +30,7 @@ body {
   background-position: 0 0, 0 0, 0 0;
   min-height: 100vh;
   color: #ffffff;
+  @apply scrollbar-custom;
 }
 
 @layer base {
@@ -65,6 +66,30 @@ body {
     @apply bg-gradient-to-r from-[#0095FF]/10 via-[#0047AB]/10 to-[#1A2642]/10 bg-[length:200%_200%];
     animation: gradient 15s ease infinite;
   }
+
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 149, 255, 0.3) transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(0, 149, 255, 0.3);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 149, 255, 0.5);
+  }
 }
 
 @keyframes gradient {
@@ -77,4 +102,25 @@ body {
   100% {
     background-position: 0% 50%;
   }
+}
+
+@keyframes hideScrollbar {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+body::-webkit-scrollbar {
+  animation: hideScrollbar 5s forwards;
+}
+
+body:hover::-webkit-scrollbar {
+  opacity: 1 !important;
+  animation: none;
 }
