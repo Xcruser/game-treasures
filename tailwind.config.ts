@@ -40,6 +40,21 @@ export default {
       },
       boxShadow: {
         'glass': '0 4px 6px -1px rgba(0, 240, 255, 0.05), 0 2px 4px -1px rgba(0, 240, 255, 0.03)',
+      },
+      keyframes: {
+        gradient: {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center',
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center',
+          },
+        },
+      },
+      animation: {
+        gradient: 'gradient 8s ease infinite',
       }
     },
   },

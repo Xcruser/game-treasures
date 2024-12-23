@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
 import "./globals.css";
+import ClientLayout from '@/components/ClientLayout';
+import { metadata } from './metadata';
 
-export const metadata: Metadata = {
-  title: "Game Treasures",
-  description: "Your gaming collection manager",
-};
+const inter = Inter({ subsets: ['latin'] });
+
+export { metadata };
 
 export default function RootLayout({
   children,
@@ -12,9 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gradient-game from-background via-background-secondary to-background-tertiary">
-        {children}
+    <html lang="de">
+      <body className={`${inter.className} bg-[#0B1120]`}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

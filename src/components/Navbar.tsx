@@ -1,143 +1,169 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
 import SearchBar from './SearchBar';
+import { usePathname } from 'next/navigation';
+import { FaShoppingCart } from 'react-icons/fa';
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0); // TODO: Connect to real cart state
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isActivePath = (path: string) => {
+    return pathname === path;
+  };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-glass bg-navbar-glass border-b border-navbar-border shadow-glass">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo und Titel - Links */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
-                GameTreasures
-              </span>
-            </Link>
-          </div>
+    <nav className="fixed top-0 left-0 right-0 z-50">
+      {/* Glaseffekt Container */}
+      <div className="bg-[#0B1120]/90 backdrop-blur-md border-b border-[#1A2642] shadow-lg relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0047AB]/10 via-transparent to-[#0047AB]/10 pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo und Navigation Links */}
+            <div className="flex items-center">
+              <Link href="/" className="text-[#00E5FF] text-xl font-bold hover:text-[#4C9EEB] transition-colors duration-300">
+                <span className="text-xl font-bold bg-gradient-to-r from-[#4C9EEB] to-[#00E5FF] text-transparent bg-clip-text">
+                  GameTreasures
+                </span>
+              </Link>
 
-          {/* Navigation - Mitte */}
-          <div className="hidden md:flex items-center justify-center space-x-8">
-            <Link 
-              href="/shop" 
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass px-3 py-2 rounded-md transition-all duration-200"
-            >
-              Shop
-            </Link>
-            <Link 
-              href="/contact" 
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass px-3 py-2 rounded-md transition-all duration-200"
-            >
-              Kontakt
-            </Link>
-          </div>
-
-          {/* Rechte Seite: Suche, Warenkorb, Login */}
-          <div className="hidden md:flex items-center space-x-6">
-            <SearchBar />
-            
-            {/* Warenkorb */}
-            <Link href="/cart" className="relative group">
-              <div className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                <svg 
-                  className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={1.5} 
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" 
-                  />
-                </svg>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
+              {/* Desktop Navigation */}
+              <div className="hidden md:block ml-10">
+                <div className="flex items-center space-x-4">
+                  <Link
+                    href="/shop"
+                    className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                      isActivePath('/shop')
+                        ? 'bg-[#0095FF] text-white'
+                        : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
+                    }`}
+                  >
+                    Shop
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                      isActivePath('/contact')
+                        ? 'bg-[#0095FF] text-white'
+                        : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
+                    }`}
+                  >
+                    Kontakt
+                  </Link>
+                </div>
               </div>
-            </Link>
+            </div>
 
-            {/* Login Button */}
-            <Link 
-              href="/login"
-              className="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 px-4 py-2 rounded-full transition-all duration-200 text-sm font-medium"
-            >
-              Anmelden
-            </Link>
-          </div>
+            {/* Rechte Seite - Suche, Warenkorb, Anmelden */}
+            <div className="flex items-center space-x-4">
+              {/* Suchfeld */}
+              <div className="hidden md:block">
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="desktop-search"
+                    name="desktop-search"
+                    placeholder="Suche..."
+                    autoComplete="off"
+                    aria-label="Suche"
+                    className="w-64 bg-[#1E2A45]/50 backdrop-blur-[2px] border border-[#2A3B5E] rounded-full py-1 px-4 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0047AB]/30 focus:border-transparent transition-all duration-300"
+                  />
+                </div>
+              </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-navbar-glass focus:outline-none"
-            >
-              <span className="sr-only">Menü öffnen</span>
-              <svg
-                className="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              {/* Warenkorb */}
+              <Link
+                href="/cart"
+                className="p-2 text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
+                <FaShoppingCart className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 bg-[#0095FF] text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  0
+                </span>
+              </Link>
+
+              {/* Anmelden Button */}
+              <Link
+                href="/login"
+                className="bg-[#0095FF] hover:bg-[#0077FF] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+              >
+                Anmelden
+              </Link>
+
+              {/* Mobile Menü Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-md text-gray-400 hover:text-white focus:outline-none"
+              >
+                <span className="sr-only">Menü öffnen</span>
+                {!isMobileMenuOpen ? (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                ) : (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-navbar-glass backdrop-blur-glass border-t border-navbar-border">
+        {/* Mobile Menü */}
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden bg-[#0B1120]/95 backdrop-blur-md border-t border-[#1A2642]`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <div className="p-4">
-              <SearchBar />
+            {/* Mobile Suchfeld */}
+            <div className="px-3 py-2">
+              <input
+                type="text"
+                id="mobile-search"
+                name="mobile-search"
+                placeholder="Suche..."
+                autoComplete="off"
+                aria-label="Suche"
+                className="w-full bg-[#1E2A45]/50 backdrop-blur-[2px] border border-[#2A3B5E] rounded-full py-1 px-4 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0047AB]/30 focus:border-transparent transition-all duration-300"
+              />
             </div>
+
+            {/* Mobile Navigation Links */}
             <Link
               href="/shop"
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass block px-3 py-2 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              className={`block px-3 py-2 rounded-md ${
+                isActivePath('/shop')
+                  ? 'bg-[#0095FF] text-white'
+                  : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Shop
             </Link>
             <Link
               href="/contact"
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass block px-3 py-2 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              className={`block px-3 py-2 rounded-md ${
+                isActivePath('/contact')
+                  ? 'bg-[#0095FF] text-white'
+                  : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Kontakt
             </Link>
-            <Link
-              href="/cart"
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass block px-3 py-2 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Warenkorb {cartCount > 0 && `(${cartCount})`}
-            </Link>
+
+            {/* Mobile Anmelden Button */}
             <Link
               href="/login"
-              className="text-gray-300 hover:text-white hover:bg-navbar-glass block px-3 py-2 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              className="block px-3 py-2 text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Anmelden
             </Link>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

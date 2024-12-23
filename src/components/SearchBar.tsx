@@ -12,19 +12,16 @@ interface SearchResult {
 }
 
 export default function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const debouncedSearch = useDebounce(searchTerm, 300);
+  const debouncedQuery = useDebounce(query, 300);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-        setIsFocused(false);
       }
     };
 
@@ -34,93 +31,64 @@ export default function SearchBar() {
 
   useEffect(() => {
     const searchItems = async () => {
-      if (debouncedSearch.trim() === '') {
+      if (debouncedQuery.length < 2) {
         setResults([]);
         return;
       }
 
-      setIsLoading(true);
-      try {
-        // Mock-Daten für die Demo
-        const mockResults: SearchResult[] = [
-          { id: '1', name: 'Schwert der Macht', type: 'Waffe', price: 1000 },
-          { id: '2', name: 'Magischer Ring', type: 'Accessoire', price: 500 },
-          { id: '3', name: 'Heilungstrank', type: 'Verbrauchbar', price: 100 },
-        ].filter(item => 
-          item.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-        );
+      // Hier später echte API-Suche implementieren
+      const mockResults: SearchResult[] = [
+        { id: '1', name: 'Würfel Set', type: 'item', price: 9.99 },
+        { id: '2', name: 'Würfelbecher', type: 'item', price: 14.99 },
+      ];
 
-        setResults(mockResults);
-        setIsOpen(true);
-      } catch (error) {
-        console.error('Fehler bei der Suche:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      setResults(mockResults);
+      setIsOpen(true);
     };
 
     searchItems();
-  }, [debouncedSearch]);
+  }, [debouncedQuery]);
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-xs">
-      <div className="relative group">
+    <div ref={wrapperRef} className="relative w-full">
+      <div className="relative">
         <input
           type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setIsFocused(true)}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Suche..."
-          className={`w-full bg-white/5 backdrop-blur-sm border-0 rounded-full py-1.5 pl-8 pr-4 text-sm text-gray-300 placeholder-gray-500 
-            transition-all duration-200 outline-none
-            ${isFocused ? 'bg-white/10 shadow-lg shadow-cyan-500/10' : 'hover:bg-white/8'}
-            focus:ring-1 focus:ring-cyan-400/30`}
+          className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-[#0095FF] focus:ring-1 focus:ring-[#0095FF]"
         />
-        <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none">
-          <svg
-            className={`h-3.5 w-3.5 transition-colors duration-200 ${
-              isFocused ? 'text-cyan-400' : 'text-gray-500'
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-        {isLoading && (
-          <div className="absolute inset-y-0 right-3 flex items-center">
-            <div className="animate-spin rounded-full h-3 w-3 border-t-[1.5px] border-cyan-400"></div>
-          </div>
-        )}
+        <button 
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+          onClick={() => setQuery('')}
+        >
+          {query && (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+        </button>
       </div>
 
-      {/* Suchergebnisse Dropdown */}
+      {/* Suchergebnisse */}
       {isOpen && results.length > 0 && (
-        <div className="absolute mt-2 w-full bg-navbar-glass backdrop-blur-glass rounded-lg border border-white/5 shadow-xl shadow-black/20 overflow-hidden z-50">
-          <div className="max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-400/20 scrollbar-track-transparent">
-            {results.map((item) => (
-              <div
-                key={item.id}
-                className="px-4 py-2 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+        <div className="absolute z-50 w-full mt-2 bg-[#0F1730] border border-white/10 rounded-xl shadow-xl max-h-[60vh] overflow-y-auto">
+          <div className="p-2">
+            {results.map((result) => (
+              <button
+                key={result.id}
+                className="w-full p-3 flex items-center space-x-3 hover:bg-white/5 rounded-lg transition-colors"
                 onClick={() => {
-                  console.log('Navigate to:', item);
+                  setQuery('');
                   setIsOpen(false);
-                  setSearchTerm('');
                 }}
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-white text-sm font-medium">{item.name}</h3>
-                    <p className="text-gray-400 text-xs">{item.type}</p>
-                  </div>
-                  <span className="text-cyan-400 text-xs font-medium">{item.price} G</span>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-white">{result.name}</div>
+                  <div className="text-sm text-gray-400">€{result.price.toFixed(2)}</div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

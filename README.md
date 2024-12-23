@@ -1,73 +1,40 @@
-# GameTreasures
+# Game Treasures
 
-Eine moderne Plattform für den Handel mit In-Game Items, entwickelt mit Next.js 13+, TypeScript und Tailwind CSS.
+Eine moderne Gaming-Shop-Anwendung, entwickelt mit Next.js 13+, React und Tailwind CSS.
 
 ## Features
 
-### Navigation & UI
-- Moderne, responsive Navbar mit Glaseffekt-Design
-- Dynamische Suchfunktion mit Echtzeit-Ergebnissen
-- Warenkorb-System mit visueller Feedback
-- Benutzerauthentifizierung
-
-### Design-System
-- Dunkles Theme mit subtilen Blautönen
-- Glassmorphismus-Effekte
-- Responsive Design für alle Geräten
-- Moderne UI-Komponenten mit Hover-Effekten
+- Dynamische Item-Anzeige mit Lazy Loading
+- Modernes UI-Design mit Glasmorphismus-Effekten
+- Responsive Suchfunktion (Desktop & Mobile)
+- Integrierter Warenkorb
+- Optimierte Performance durch:
+  - Lazy Loading von Komponenten
+  - Intersection Observer für Bildladung
+  - Optimierte Next.js Image-Komponente
+  - Progressive Loading States
 
 ## Technologie-Stack
 
-- **Frontend Framework:** Next.js 13+
-- **Sprache:** TypeScript
-- **Styling:** Tailwind CSS
-- **State Management:** React Hooks
-- **Komponenten:** Custom React Components
+- **Framework**: Next.js 13+
+- **UI**: React & Tailwind CSS
+- **Icons**: React Icons
+- **Performance**: Next.js Image Optimization
+- **Styling**: CSS Modules & Tailwind CSS
 
-## Komponenten
+## Performance-Optimierungen
 
-### Navbar (`/src/components/Navbar.tsx`)
-- Responsive Navigation
-- Integrierte Suchfunktion
-- Warenkorb-Anzeige
-- Benutzer-Authentifizierung
+- Lazy Loading für Komponenten und Bilder
+- Optimierte Bildgrößen und Formate
+- Progressive Loading States
+- Intersection Observer für verzögertes Laden
+- Optimierte Metadaten für SEO
 
-### SearchBar (`/src/components/SearchBar.tsx`)
-- Echtzeit-Suche mit Debouncing
-- Dropdown mit Suchergebnissen
-- Responsive Design
-- Keyboard Navigation (geplant)
-
-### Custom Hooks
-- `useDebounce`: Optimiert Suchanfragen
-
-## Styling
-
-### Farbschema
-```typescript
-// Hauptfarben
-background: {
-  DEFAULT: '#000008',    // Sehr dunkles Blauschwarz
-  secondary: '#00000f',  // Etwas mehr Blau
-  tertiary: '#000016',   // Noch etwas mehr Blau
-}
-
-// Akzentfarben
-- Cyan/Blau Verläufe für Highlights
-- Glaseffekte mit subtiler Transparenz
-```
-
-### Glaseffekt-System
-- Subtile Transparenz
-- Weicher Blur-Effekt
-- Dezente Borders
-- Sanfte Schatten
-
-## Installation
+## Setup
 
 1. Repository klonen:
 ```bash
-git clone [repository-url]
+git clone https://github.com/yourusername/game-treasures.git
 ```
 
 2. Abhängigkeiten installieren:
@@ -80,18 +47,32 @@ npm install
 npm run dev
 ```
 
-## Geplante Features
+4. Browser öffnen und zur Anwendung navigieren:
+```
+http://localhost:3000
+```
+
+## Projektstruktur
+
+```
+src/
+├── app/                    # Next.js App Router
+├── components/            # React Komponenten
+│   ├── ItemCard.tsx      # Produkt-Karten
+│   ├── Navbar.tsx        # Navigation
+│   └── LoadingSpinner.tsx # Lade-Animation
+├── styles/               # Globale Styles
+└── types/                # TypeScript Definitionen
+```
+
+## Nächste Schritte
 
 - [ ] Backend-Integration
-- [ ] Erweiterte Suchfilter
-- [ ] Benutzerprofile
-- [ ] Item-Kategorisierung
-- [ ] Bewertungssystem
-
-## Mitwirken
-
-Beiträge sind willkommen! Bitte lesen Sie unsere Beitragsrichtlinien für weitere Informationen.
+- [ ] Authentifizierung
+- [ ] Warenkorb-Funktionalität
+- [ ] Zahlungsabwicklung
+- [ ] Admin-Dashboard
 
 ## Lizenz
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert.
+MIT
