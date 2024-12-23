@@ -1,13 +1,12 @@
 'use client';
 
 import { Suspense, lazy, useEffect, useState } from 'react';
-import { mockItems } from '@/data/mockItems';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Lazy load the ItemCard component
 const ItemCard = lazy(() => import('@/components/ItemCard'));
 
-// Temporärer Typ für Items (später durch Prisma-Typen ersetzen)
+// Typ für Items aus der Datenbank
 interface Item {
   id: string;
   name: string;
@@ -16,7 +15,6 @@ interface Item {
   imageUrl: string;
   inStock: number;
   category: string;
-  discount: string;
 }
 
 export default function ShopPage() {
@@ -24,13 +22,17 @@ export default function ShopPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setVisibleItems(mockItems);
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    // Lade Daten von der API
+    fetch('/api/products')
+      .then(response => response.json())
+      .then(data => {
+        setVisibleItems(data);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading products:', error);
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {

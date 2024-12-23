@@ -11,7 +11,7 @@ interface ItemCardProps {
     price: number;
     imageUrl: string;
     inStock: number;
-    discount: string;
+    category: string;
   };
   onAddToCart?: (quantity: number) => void;
 }
@@ -77,6 +77,15 @@ export default function ItemCard({ item, onAddToCart }: ItemCardProps) {
                   In den Warenkorb
                 </button>
               </div>
+
+              {/* Lagerbestand-Anzeige */}
+              <div className="text-sm">
+                {item.inStock > 0 ? (
+                  <span className="text-green-500">{item.inStock} auf Lager</span>
+                ) : (
+                  <span className="text-red-500">Ausverkauft</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -99,107 +108,48 @@ export default function ItemCard({ item, onAddToCart }: ItemCardProps) {
                       e.stopPropagation();
                       setQuantity(Math.max(1, quantity - 1));
                     }}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1A2642] text-white hover:bg-[#2A3B5E] transition-colors"
                   >
                     -
                   </button>
-                  <span className="text-white w-8 text-center">
-                    {quantity}
-                  </span>
+                  <span className="text-white">{quantity}</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setQuantity(Math.min(item.inStock, quantity + 1));
                     }}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1A2642] text-white hover:bg-[#2A3B5E] transition-colors"
                   >
                     +
                   </button>
                 </div>
-                <span className="text-gray-400 text-sm">
-                  {item.inStock} verfügbar
-                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart();
+                  }}
+                  className="px-6 py-2 bg-[#0095FF] text-white rounded-full text-sm font-medium hover:bg-[#0077FF] transition-colors duration-300"
+                >
+                  {quantity} {quantity === 1 ? 'Stück' : 'Stücke'} hinzufügen
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Modal für erweiterte Details */}
+      {/* Modal für Details (wenn außerhalb des sichtbaren Bereichs) */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <div 
-            className="fixed inset-0 bg-[#000]/70 bg-gradient-to-b from-[#0047AB]/20 to-transparent backdrop-blur-sm"
-            onClick={() => setShowModal(false)}
-          />
-          <div className="relative bg-[#0B1120]/95 backdrop-blur-md rounded-2xl border border-[#1A2642] w-full max-w-lg overflow-hidden shadow-2xl">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-[#1A2642] bg-gradient-to-r from-[#0047AB]/10 to-transparent backdrop-blur-[2px]">
-              <h3 className="text-xl font-medium text-white">{item.name}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[#0B1120] rounded-2xl p-6 max-w-lg w-full">
+            <h3 className="text-xl font-bold text-white mb-4">{item.name}</h3>
+            <p className="text-gray-400 mb-6">{item.description}</p>
+            <div className="flex justify-end">
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 bg-[#0095FF] text-white rounded-lg"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-4 bg-gradient-to-b from-[#0047AB]/5 to-[#0B1120]/95 backdrop-blur-[2px]">
-              <div className="relative w-full aspect-square mb-4">
-                <Image
-                  src={item.imageUrl}
-                  alt={item.name}
-                  fill
-                  sizes="(max-width: 768px) 90vw, 600px"
-                  priority={false}
-                  className="object-contain p-4"
-                />
-              </div>
-
-              <p className="text-gray-300 mb-6">
-                {item.description}
-              </p>
-
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-[#00E5FF] text-2xl font-bold">
-                  €{item.price.toFixed(2)}
-                </span>
-                <span className="text-gray-400">
-                  {item.inStock} verfügbar
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="text-white text-xl w-12 text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(Math.min(item.inStock, quantity + 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  handleAddToCart();
-                  setShowModal(false);
-                }}
-                className="w-full py-3 bg-[#0095FF] hover:bg-[#0077FF] text-white rounded-full text-lg font-medium transition-colors duration-300"
-              >
-                In den Warenkorb
+                Schließen
               </button>
             </div>
           </div>

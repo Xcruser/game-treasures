@@ -10,6 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Admin {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  hashedPassword String
+  name           String?
+  lastLogin      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
 model Item {
   id          String   @id @default(cuid())
   name        String
@@ -17,7 +27,7 @@ model Item {
   price       Float
   imageUrl    String
   category    String
-  inStock     Int      @default(0)
+  inStock     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
