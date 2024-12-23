@@ -46,9 +46,9 @@ export default function Navbar() {
                     Shop
                   </Link>
                   <Link
-                    href="/contact"
+                    href="/kontakt"
                     className={`px-4 py-2 rounded-full transition-all duration-200 ${
-                      isActivePath('/contact')
+                      isActivePath('/kontakt')
                         ? 'bg-[#0095FF] text-white'
                         : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
                     }`}
@@ -142,9 +142,9 @@ export default function Navbar() {
               Shop
             </Link>
             <Link
-              href="/contact"
+              href="/kontakt"
               className={`block px-3 py-2 rounded-md ${
-                isActivePath('/contact')
+                isActivePath('/kontakt')
                   ? 'bg-[#0095FF] text-white'
                   : 'text-gray-300 hover:text-[#4C9EEB] transition-colors duration-300'
               }`}
