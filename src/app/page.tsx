@@ -1,4 +1,7 @@
 import BackgroundIcons from '@/components/BackgroundIcons';
+import Image from 'next/image';
+import NewsletterBadge from '@/components/NewsletterBadge';
+import CookieBanner from '@/components/CookieBanner';
 
 export default function Home() {
   return (
@@ -28,6 +31,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Newsletter und Cookie-Banner */}
+      <NewsletterBadge />
+      <CookieBanner />
     </main>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { FaUpload, FaImage, FaTimes, FaCheck } from 'react-icons/fa';
+import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface ImageSelectorProps {
   value: string;
@@ -25,12 +27,18 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
   useEffect(() => {
     const fetchImages = async () => {
       try {
+        console.log('Fetching images...');
         const response = await fetch('/api/images');
-        if (!response.ok) throw new Error('Fehler beim Laden der Bilder');
+        if (!response.ok) {
+          console.error('Error response:', response.status, response.statusText);
+          throw new Error('Fehler beim Laden der Bilder');
+        }
         const data = await response.json();
-        setUploadedImages(data.images);
+        console.log('Received images data:', data);
+        setUploadedImages(data.images || []);
       } catch (error) {
         console.error('Error fetching images:', error);
+        setError('Fehler beim Laden der Bilder');
       }
     };
 
@@ -47,17 +55,21 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
     // Überprüfe Dateityp
     if (!file.type.startsWith('image/')) {
       setError('Bitte nur Bilddateien hochladen');
+      toast.error('Bitte nur Bilddateien hochladen');
       return;
     }
 
     // Überprüfe Dateigröße (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setError('Die Datei ist zu groß (maximal 5MB)');
+      toast.error('Die Datei ist zu groß (maximal 5MB)');
       return;
     }
 
     setError(null);
     setUploading(true);
+
+    const uploadToast = toast.loading('Bild wird hochgeladen...');
 
     try {
       const formData = new FormData();
@@ -68,11 +80,12 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Upload fehlgeschlagen');
+        throw new Error(data.error || 'Upload fehlgeschlagen');
       }
 
-      const data = await response.json();
       if (data.url) {
         onChange(data.url);
         // Aktualisiere die Liste der hochgeladenen Bilder
@@ -82,21 +95,29 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
           uploadedAt: new Date().toISOString()
         }, ...prev]);
         setActiveTab('gallery');
+        toast.success('Bild erfolgreich hochgeladen', { id: uploadToast });
       } else {
         throw new Error('Keine URL vom Server erhalten');
       }
     } catch (error) {
       console.error('Error uploading image:', error);
       setError('Fehler beim Hochladen des Bildes');
+      toast.error(
+        error instanceof Error ? error.message : 'Fehler beim Hochladen des Bildes',
+        { id: uploadToast }
+      );
     } finally {
       setUploading(false);
     }
   }, [onChange]);
 
   const handleModalClose = useCallback(() => {
-    setIsModalOpen(false);
-    setError(null);
-  }, []);
+    if (!uploading) {
+      setIsModalOpen(false);
+      setError(null);
+      setActiveTab('gallery');
+    }
+  }, [uploading]);
 
   return (
     <div className="relative">
@@ -104,10 +125,11 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
       <div className="mb-2 relative">
         {value && (
           <div className="relative group">
-            <img
+            <Image
               src={value}
               alt="Selected"
-              className="w-full h-48 object-cover rounded-lg"
+              fill
+              className="object-cover rounded-lg h-48"
             />
             <button
               type="button"
@@ -140,7 +162,10 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
       {isModalOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleModalClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleModalClose();
+          }}
         >
           <div 
             className="bg-[#1A2642] rounded-xl shadow-lg w-full max-w-4xl mx-4 p-6"
@@ -150,7 +175,10 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
               <h3 className="text-xl font-semibold text-white">Bild auswählen</h3>
               <button
                 type="button"
-                onClick={handleModalClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleModalClose();
+                }}
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <FaTimes className="w-5 h-5" />
@@ -166,22 +194,30 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
             {/* Tabs */}
             <div className="flex space-x-4 mb-6 border-b border-gray-700">
               <button
+                type="button"
                 className={`px-4 py-2 font-medium transition-colors ${
                   activeTab === 'gallery'
                     ? 'text-[#0095FF] border-b-2 border-[#0095FF]'
                     : 'text-gray-400 hover:text-white'
                 }`}
-                onClick={() => setActiveTab('gallery')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab('gallery');
+                }}
               >
                 Galerie
               </button>
               <button
+                type="button"
                 className={`px-4 py-2 font-medium transition-colors ${
                   activeTab === 'upload'
                     ? 'text-[#0095FF] border-b-2 border-[#0095FF]'
                     : 'text-gray-400 hover:text-white'
                 }`}
-                onClick={() => setActiveTab('upload')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab('upload');
+                }}
               >
                 Hochladen
               </button>
@@ -189,7 +225,7 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
 
             {activeTab === 'upload' ? (
               /* Upload-Bereich */
-              <div className="mb-6">
+              <div className="mb-6" onClick={(e) => e.stopPropagation()}>
                 <label className="block w-full px-4 py-8 border-2 border-dashed border-gray-600 rounded-lg hover:border-[#0095FF] transition-colors cursor-pointer">
                   <input
                     type="file"
@@ -197,7 +233,6 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
                     className="hidden"
                     onChange={handleFileUpload}
                     disabled={uploading}
-                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="text-center">
                     <FaUpload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
@@ -212,35 +247,53 @@ export default function ImageSelector({ value, onChange }: ImageSelectorProps) {
               </div>
             ) : (
               /* Galerie-Bereich */
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto p-2">
-                {uploadedImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className={`relative group cursor-pointer rounded-lg overflow-hidden ${
-                      value === image.url ? 'ring-2 ring-[#0095FF]' : ''
-                    }`}
-                    onClick={() => {
-                      onChange(image.url);
-                      handleModalClose();
-                    }}
-                  >
-                    <img
-                      src={image.url}
-                      alt={image.name}
-                      className="w-full h-32 object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
-                      {value === image.url ? (
-                        <FaCheck className="text-[#0095FF] w-6 h-6" />
-                      ) : (
-                        <FaCheck className="text-white w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      )}
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 text-white text-xs truncate">
-                      {image.name}
-                    </div>
+              <div>
+                {uploadedImages.length === 0 ? (
+                  <div className="text-center text-gray-400 py-8">
+                    <FaImage className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Keine Bilder gefunden</p>
+                    <p className="text-sm mt-2">Laden Sie zuerst ein Bild hoch</p>
                   </div>
-                ))}
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto p-2">
+                    {uploadedImages.map((image, index) => {
+                      console.log('Rendering image:', image);
+                      return (
+                        <div
+                          key={index}
+                          className={`relative group cursor-pointer rounded-lg overflow-hidden aspect-square ${
+                            value === image.url ? 'ring-2 ring-[#0095FF]' : ''
+                          }`}
+                          onClick={() => {
+                            console.log('Selected image:', image);
+                            onChange(image.url);
+                            handleModalClose();
+                          }}
+                        >
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={image.url}
+                              alt={image.name}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
+                            {value === image.url ? (
+                              <FaCheck className="text-[#0095FF] w-6 h-6" />
+                            ) : (
+                              <FaCheck className="text-white w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            )}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 text-white text-xs truncate">
+                            {image.name}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>

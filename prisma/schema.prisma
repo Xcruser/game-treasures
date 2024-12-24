@@ -39,12 +39,15 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
+  username      String?   @unique // Optional für bestehende Benutzer
   name          String?
   email         String    @unique
   emailVerified DateTime?
   password      String
-  role          String    @default("user")
+  role          String    @default("USER")
   image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt @default(now()) // Standardwert für bestehende Benutzer
   accounts      Account[]
   sessions      Session[]
 }
@@ -62,9 +65,10 @@ model Item {
   name        String
   description String?
   price       Float
-  category    String
+  game        String   // Das Spiel, zu dem der Item gehört (z.B. "Monopoly", "Dungeons & Dragons")
+  category    String   // Die Unterkategorie (z.B. "Würfel", "Karten", "Figuren")
   imageUrl    String?
-  inStock     Int      @default(0)
+  inStock     Int      @default(-1)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -84,4 +88,61 @@ model Admin {
   name           String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  isActive        Boolean   @default(true)
+  subscribedAt    DateTime  @default(now())
+  unsubscribedAt  DateTime?
+  lastEmailSentAt DateTime?
+}
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  subject   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scheduledEmails ScheduledEmail[]
+}
+
+model ScheduledEmail {
+  id           String        @id @default(cuid())
+  template     EmailTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId   String
+  scheduledFor DateTime
+  status       String        @default("pending")
+  createdAt    DateTime      @default(now())
+  sentAt       DateTime?
+
+  @@index([status, scheduledFor])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  items         OrderItem[]
+  status        String      @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED
+  totalAmount   Float
+  customerName  String
+  paymentStatus String      @default("PENDING") // PENDING, CONFIRMED
+  paymentDate   DateTime?   // Datum der Zahlungsbestätigung
+  notes         String?     // Admin-Notizen
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  itemId    String
+  name      String
+  price     Float
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

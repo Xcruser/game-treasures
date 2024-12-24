@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { authenticateAdmin } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -12,9 +13,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const admin = await authenticateAdmin(email, password);
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'Ungültige Anmeldedaten' },
+        { status: 401 }
+      );
+    }
 
-    if (!admin) {
+    const isAdmin = session.user.role === 'ADMIN';
+    if (!isAdmin) {
       return NextResponse.json(
         { error: 'Ungültige Anmeldedaten' },
         { status: 401 }
@@ -24,7 +32,7 @@ export async function POST(request: Request) {
     // Erfolgreiche Anmeldung
     return NextResponse.json({
       message: 'Erfolgreich angemeldet',
-      admin,
+      admin: session.user,
     });
   } catch (error) {
     console.error('Login-Fehler:', error);

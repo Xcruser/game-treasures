@@ -1,13 +1,10 @@
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import "./globals.css";
 import Navbar from '@/components/Navbar';
-import { metadata } from './metadata';
+import CartDrawer from '@/components/CartDrawer';
 import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export { metadata };
 
 export default function RootLayout({
   children,
@@ -20,6 +17,9 @@ export default function RootLayout({
         <Providers>
           {/* Navigation */}
           <Navbar />
+          
+          {/* CartDrawer */}
+          <CartDrawer />
           
           {/* Basis-Hintergrund */}
           <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#0B1120] via-[#131B2E] to-[#0B1120] opacity-60" />

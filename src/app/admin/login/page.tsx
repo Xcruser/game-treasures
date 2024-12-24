@@ -1,109 +1,95 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams?.get('from') || '/admin/dashboard';
+  const { login, isLoading, error, user } = useAuth();
+
+  useEffect(() => {
+    // Wenn der Benutzer bereits eingeloggt ist, leite ihn weiter
+    if (user) {
+      router.push(from);
+    }
+  }, [user, router, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError('Ungültige Anmeldedaten');
-      } else {
-        router.push('/admin/dashboard');
-        router.refresh();
+      const success = await login(email, password);
+      
+      if (success) {
+        toast.success('Erfolgreich eingeloggt');
+        router.push(from);
+      } else if (error) {
+        toast.error(error);
       }
     } catch (error) {
-      setError('Ein Fehler ist aufgetreten');
-    } finally {
-      setIsLoading(false);
+      console.error('Login error:', error);
+      toast.error('Ein Fehler ist aufgetreten');
     }
   };
 
+  // Wenn noch geprüft wird, ob der Benutzer eingeloggt ist
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0F172A]">
+        <div className="text-white">Laden...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8 bg-[#1A2642] p-8 rounded-xl shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Admin Login
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-500 px-4 py-3 rounded relative">
-              {error}
-            </div>
-          )}
-          
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div className="mb-4">
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaEnvelope className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-2 border border-gray-600 bg-[#243154] placeholder-gray-400 text-white focus:outline-none focus:ring-[#0095FF] focus:border-[#0095FF] focus:z-10 sm:text-sm"
-                  placeholder="Email Adresse"
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Passwort
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-2 border border-gray-600 bg-[#243154] placeholder-gray-400 text-white focus:outline-none focus:ring-[#0095FF] focus:border-[#0095FF] focus:z-10 sm:text-sm"
-                  placeholder="Passwort"
-                />
-              </div>
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#0F172A]">
+      <div className="bg-[#1E293B] p-8 rounded-lg shadow-xl w-full max-w-md">
+        <h1 className="text-2xl font-bold text-white mb-6 text-center">Admin Login</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
+            />
           </div>
 
           <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#0095FF] hover:bg-[#0077FF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0095FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
-            </button>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              Passwort
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
+            />
           </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isLoading ? 'Anmeldung...' : 'Anmelden'}
+          </button>
         </form>
       </div>
     </div>

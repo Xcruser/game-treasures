@@ -18,15 +18,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Erstelle den Upload-Ordner, falls er nicht existiert
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    // Erstelle den Images-Ordner, falls er nicht existiert
+    const imagesDir = join(process.cwd(), 'public', 'images');
+    if (!existsSync(imagesDir)) {
+      await mkdir(imagesDir, { recursive: true });
     }
 
     // Erstelle einen eindeutigen Dateinamen
     const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const path = join(uploadDir, filename);
+    const path = join(imagesDir, filename);
 
     // Speichere die Datei
     await writeFile(path, buffer);
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     console.log('File saved successfully:', filename);
 
     return NextResponse.json({ 
-      url: `/uploads/${filename}`,
+      url: `/images/${filename}`,
       success: true 
     });
   } catch (error) {

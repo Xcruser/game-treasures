@@ -2,111 +2,126 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaBox, FaShoppingCart, FaUsers, FaChartBar, FaCog } from 'react-icons/fa';
+import { FaHome, FaBox, FaEnvelope, FaNewspaper, FaShoppingBag, FaChartBar } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 
 export default function AdminSidebar() {
+  const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
 
+  const closeSidebar = () => {
+    if (window.innerWidth < 1024) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isActive = (path: string) => {
-    return pathname === path;
+    return pathname?.startsWith(path) ? 'bg-[#243154]' : '';
   };
 
   return (
-    <div className="fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-[#1A2642]/40 backdrop-blur-md">
-      <nav className="flex flex-col h-full">
-        <div className="flex-1 py-4">
-          <ul className="space-y-2 px-4">
-            <li>
-              <Link
-                href="/admin/dashboard"
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive('/admin/dashboard')
-                    ? 'bg-[#0095FF] text-white'
-                    : 'text-gray-300 hover:bg-[#0095FF]/10 hover:text-white'
-                }`}
-              >
-                <FaHome className="w-5 h-5" />
-                <span>Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/products"
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive('/admin/products')
-                    ? 'bg-[#0095FF] text-white'
-                    : 'text-gray-300 hover:bg-[#0095FF]/10 hover:text-white'
-                }`}
-              >
-                <FaBox className="w-5 h-5" />
-                <span>Produkte</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/orders"
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive('/admin/orders')
-                    ? 'bg-[#0095FF] text-white'
-                    : 'text-gray-300 hover:bg-[#0095FF]/10 hover:text-white'
-                }`}
-              >
-                <FaShoppingCart className="w-5 h-5" />
-                <span>Bestellungen</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/customers"
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive('/admin/customers')
-                    ? 'bg-[#0095FF] text-white'
-                    : 'text-gray-300 hover:bg-[#0095FF]/10 hover:text-white'
-                }`}
-              >
-                <FaUsers className="w-5 h-5" />
-                <span>Kunden</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/statistics"
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive('/admin/statistics')
-                    ? 'bg-[#0095FF] text-white'
-                    : 'text-gray-300 hover:bg-[#0095FF]/10 hover:text-white'
-                }`}
-              >
-                <FaChartBar className="w-5 h-5" />
-                <span>Statistiken</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-        
-        {/* Admin Info & Settings */}
-        <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center space-x-3 px-4 py-2">
-            <div className="w-8 h-8 rounded-full bg-[#0095FF] flex items-center justify-center">
-              <span className="text-white text-sm font-medium">A</span>
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-white">Admin</div>
-              <div className="text-xs text-gray-400">admin@gametreasures.de</div>
-            </div>
-            <Link
-              href="/admin/settings"
-              className={`p-2 rounded-lg transition-colors ${
-                isActive('/admin/settings')
-                  ? 'text-[#0095FF]'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <FaCog className="w-5 h-5" />
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md bg-[#1A2642] text-white"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <FaHome className="w-6 h-6" />
+      </button>
+
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 h-full w-64 bg-[#1A2642] transform transition-transform duration-200 ease-in-out z-40 lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <nav className="h-full flex flex-col">
+          <div className="p-4 border-b border-gray-700">
+            <Link href="/" className="text-xl font-bold text-white">
+              Game Treasures
             </Link>
           </div>
-        </div>
-      </nav>
-    </div>
+
+          <div className="flex-1">
+            <Link
+              href="/admin"
+              className={`flex items-center px-4 py-2 text-gray-300 hover:bg-gray-800 rounded-lg ${
+                pathname === '/admin' ? 'bg-gray-800' : ''
+              }`}
+            >
+              <FaChartBar className="w-5 h-5 mr-3" />
+              Dashboard
+            </Link>
+
+            <Link
+              href="/admin/orders"
+              className={`flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-[#243154] hover:text-white ${isActive(
+                '/admin/orders'
+              )}`}
+              onClick={closeSidebar}
+            >
+              <FaShoppingBag className="w-5 h-5" />
+              <span>Bestellungen</span>
+            </Link>
+
+            <Link
+              href="/admin/products"
+              className={`flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-[#243154] hover:text-white ${isActive(
+                '/admin/products'
+              )}`}
+              onClick={closeSidebar}
+            >
+              <FaBox className="w-5 h-5" />
+              <span>Produkte</span>
+            </Link>
+
+            <Link
+              href="/admin/email"
+              className={`flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-[#243154] hover:text-white ${isActive(
+                '/admin/email'
+              )}`}
+              onClick={closeSidebar}
+            >
+              <FaEnvelope className="w-5 h-5" />
+              <span>E-Mail</span>
+            </Link>
+
+            <Link
+              href="/admin/newsletter"
+              className={`flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-[#243154] hover:text-white ${isActive(
+                '/admin/newsletter'
+              )}`}
+              onClick={closeSidebar}
+            >
+              <FaNewspaper className="w-5 h-5" />
+              <span>Newsletter</span>
+            </Link>
+          </div>
+        </nav>
+      </aside>
+    </>
   );
 }
