@@ -1,4 +1,7 @@
 import BackgroundIcons from '@/components/BackgroundIcons';
+import Image from 'next/image';
+import NewsletterBadge from '@/components/NewsletterBadge';
+import CookieBanner from '@/components/CookieBanner';
 
 export default function Home() {
   return (
@@ -10,32 +13,28 @@ export default function Home() {
 
       {/* Hero Section */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="w-full max-w-5xl mx-auto">
-          <h1 className="text-7xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600">
-            GameTreasures
-          </h1>
-          <p className="text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Entdecken Sie unsere exklusiven Monopoly-Items – einfach, sicher und
-            diskret. Bei uns können Sie ganz bequem einkaufen, ohne sich registrieren zu
-            müssen. Für den Kauf benötigen Sie weder einen Account noch Ihre
-            Monopoly Go Spieldaten.
-          </p>
-          <div className="flex gap-6 justify-center">
-            <a
-              href="/shop"
-              className="px-10 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg hover:shadow-blue-500/20"
-            >
-              Zum Shop
-            </a>
-            <a
-              href="/kontakt"
-              className="px-10 py-4 bg-gray-800/80 text-white text-lg rounded-lg hover:bg-gray-700 transition-all hover:scale-105 shadow-lg"
-            >
-              Kontakt
-            </a>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl">
+              Game<span className="text-primary">Treasures</span>
+            </h1>
+            <p className="mt-3 max-w-2xl mx-auto text-base text-gray-300 sm:text-lg md:mt-5 md:text-xl">
+              Entdecken Sie unsere exklusiven Monopoly-Items – einfach, sicher und diskret. Bei uns können Sie ganz bequem einkaufen, ohne sich registrieren zu müssen. Für den Kauf benötigen Sie weder einen Account noch Ihre Monopoly Go Spieldaten.
+            </p>
+            <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+              <div className="rounded-md shadow">
+                <a href="/shop" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark md:py-4 md:text-lg md:px-10 transition-all duration-300">
+                  Produkte entdecken
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Newsletter und Cookie-Banner */}
+      <NewsletterBadge />
+      <CookieBanner />
     </main>
   );
 }

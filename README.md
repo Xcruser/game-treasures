@@ -17,112 +17,89 @@ Eine moderne E-Commerce-Plattform für Monopoly Go Items, entwickelt mit Next.js
   - Gradient-Texte und Hover-Effekte
   - Optimierte Abstände und Typografie
 
+### Admin Dashboard
+- **Benutzeroberfläche**:
+  - Modernes, responsives Dashboard-Layout
+  - Dynamische Statistiken und Übersichten
+  - Echtzeit-Produktverwaltung
+  - Bestellungs- und Benutzerverwaltung
+
+- **Features**:
+  - Vollständige Produktverwaltung (CRUD)
+    - Produkte hinzufügen, bearbeiten und löschen
+    - Bildupload und -verwaltung
+    - Lagerbestandsverwaltung (inkl. "Unbegrenzt" Option)
+  - Dashboard mit Statistiken
+    - Produktübersicht
+    - Bestellungsstatistiken
+    - Umsatzübersicht
+    - Benutzeraktivität
+  - Benutzerverwaltung
+    - Benutzer erstellen und bearbeiten
+    - Rollenverwaltung (Admin/User)
+    - Passwortmanagement
+  - Schnellzugriff auf wichtige Funktionen
+    - "Produkt hinzufügen" direkt vom Dashboard
+    - Letzte Produktaktualisierungen
+    - Aktivitätsübersicht
+
 ### Performance
 - Client-seitige Komponenten für optimale Interaktivität
 - Lazy Loading für bessere Ladezeiten
 - Optimierte Asset-Verwaltung
+- Server-Side Rendering für bessere SEO
 
 ### Sicherheit
+- Admin-Authentifizierung
 - Sichere Zahlungsabwicklung
 - Datenschutzkonforme Implementierung
-- Verschlüsselte Kommunikation
 
-## 🛠 Technologie-Stack
+## 🔧 Letzte Änderungen
 
-- **Frontend**: Next.js 13, React, TypeScript
-- **Styling**: Tailwind CSS
-- **Icons**: React Icons
-- **Animation**: Custom CSS Animations, React Hooks
-- **State Management**: React Context
+### Version 1.0.1 (24.12.2023)
+- **Fehlerbehebungen**:
+  - Korrektur des Prisma-Client-Imports für bessere Modularität
+  - Behebung von Dashboard-Statistiken-Fehlern
+  - Aktualisierung der Benutzerverwaltung-Terminologie
+  - Verbesserung der Admin-Navigation
 
-## 🗂 Projektstruktur
+- **Verbesserungen**:
+  - Optimierung der Benutzeroberfläche im Admin-Bereich
+  - Aktualisierung der Statistik-Berechnungen
+  - Verbesserung der Fehlerbehandlung in API-Routen
 
-```
-game-treasures/
-├── src/                # Quellcode
-├── public/            # Statische Assets
-├── prisma/           # Datenbankschema und Migrationen
-├── .next/            # Next.js Build-Ausgabe
-└── node_modules/     # Projektabhängigkeiten
-```
+## 🛠 Installation
 
-## 💻 Entwicklungsumgebung
-
-### Voraussetzungen
-- Node.js (>= 18.0.0)
-- npm oder yarn
-- Git
-
-### Empfohlene IDE-Einstellungen
-- VS Code mit folgenden Erweiterungen:
-  - ESLint
-  - Prettier
-  - Tailwind CSS IntelliSense
-
-## 🔧 Konfiguration
-
-1. Umgebungsvariablen einrichten:
-```bash
-cp .env.example .env.local
-```
-
-2. Datenbank einrichten:
-```bash
-npx prisma migrate dev
-```
-
-## 🧪 Tests
-
-Tests ausführen:
-```bash
-npm run test
-```
-
-## 📚 API-Dokumentation
-
-Die API-Dokumentation ist verfügbar unter `/api/docs` im Entwicklungsmodus.
-
-## 🔐 Sicherheitsrichtlinien
-
-- Alle API-Endpunkte sind mit entsprechenden Middleware-Funktionen geschützt
-- Sensitive Daten werden verschlüsselt gespeichert
-- Rate-Limiting ist implementiert
-
-## 📈 Performance-Optimierungen
-
-- Implementierung von React.memo() für optimierte Rerenders
-- Image-Optimierung durch next/image
-- Caching-Strategien für API-Calls
-
-## 🔄 Letzte Updates
-
-### Version 1.1.0
-- Implementierung des animierten Hintergrunds mit Gaming-Icons
-- Verbessertes Layout-Design mit Glasmorphismus
-- Optimierte Benutzerführung und Navigation
-- Verbesserte Performance durch Code-Splitting
-
-## 📦 Installation
-
-1. Repository klonen:
+1. Repository klonen
 ```bash
 git clone https://github.com/yourusername/game-treasures.git
 ```
 
-2. Abhängigkeiten installieren:
+2. Abhängigkeiten installieren
 ```bash
 npm install
 ```
 
-3. Entwicklungsserver starten:
+3. Umgebungsvariablen einrichten
+```bash
+cp .env.example .env.local
+```
+
+4. Entwicklungsserver starten
 ```bash
 npm run dev
 ```
 
-## 🤝 Beitragen
+## 📝 Umgebungsvariablen
 
-Wir freuen uns über Beiträge! Bitte lesen Sie unsere Beitragsrichtlinien für weitere Informationen.
+Erstellen Sie eine `.env.local` Datei mit folgenden Variablen:
 
-## 📝 Lizenz
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert.
+## 🤝 Mitwirken
+
+Beiträge sind willkommen! Bitte lesen Sie unsere Beitragsrichtlinien.
